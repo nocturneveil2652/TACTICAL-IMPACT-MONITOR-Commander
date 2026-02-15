@@ -262,7 +262,7 @@
             document.getElementById('arrival-target-display').innerText = formatFullUTC(arrivalTargetMs);
             document.getElementById('arrival-my-display').innerText = formatFullUTC(myArrivalMs);
 
-            const copyTxt = `${targetName}着弾buffer込み(+${bufferSec}s)\n${formatShortUTC(myArrivalMs)}`;
+            const copyTxt = `${targetName}着弾(buffer+${bufferSec}s)\n${formatShortUTC(myArrivalMs)}`;
             document.getElementById('copy-text').innerText = copyTxt;
         }
 
