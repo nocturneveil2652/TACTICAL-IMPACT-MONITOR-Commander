@@ -1,1 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TACTICAL IMPACT MONITOR v6.7</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto+Mono:wght@500&display=swap');
 
+        :root {
+            --bg-dark: #0f1113;
+            --card-bg: #1a1d21;
+            --accent-blue: #3782f0;
+            --accent-green: #00e676;
+            --text-main: #e0e0e0;
+            --text-sub: #78909c;
+            --font-mono: 'Roboto Mono', monospace;
+            --header-height: 60px;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 8px;
+            padding-top: calc(var(--header-height) + 20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none; 
+        }
+
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background: rgba(26, 29, 33, 0.95);
+            border-bottom: 1px solid #333;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .utc-display { font-size: 1.6em; color: var(--accent-green); font-family: var(--font-mono); font-weight: bold; }
+
+        .ms-toggle {
+            background: transparent;
+            border: 1px solid #444;
+            color: #666;
+            font-size: 0.7em;
+            padding: 1px 7px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            transition: all 0.2s;
+            line-height: 1.2;
+        }
+        .ms-toggle.active {
+            border-color: #aaa;
+            color: #eee;
+        }
+
+        .app-title {
+            font-size: 0.8em;
+            color: var(--accent-blue);
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            width: 100%;
+            max-width: 440px;
+            box-sizing: border-box;
+        }
+
+        .settings-label { font-size: 0.7em; color: var(--text-sub); margin-bottom: 4px; display: block; text-transform: uppercase; }
+
+        .num-input, .select-input { width: 100%; background: #2c313a; border: 1px solid #444; border-radius: 4px; color: var(--accent-green); font-family: var(--font-mono); font-size: 1.1em; padding: 8px; box-sizing: border-box; text-align: center; }
+
+        .rally-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+        .rally-opt { background: #2c313a; border: 1px solid #444; border-radius: 4px; text-align: center; padding: 10px 0; font-size: 0.9em; cursor: pointer; color: var(--text-sub); }
+        .rally-opt.active { background: var(--accent-blue); border-color: var(--accent-blue); color: white; font-weight: bold; }
+
+        .control-row { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+        input[type="range"] { flex-grow: 1; accent-color: var(--accent-blue); }
+        .step-btn { width: 44px; height: 44px; background: #2c313a; border: 1px solid #444; border-radius: 4px; color: white; font-size: 1.2em; }
+        .val-display { min-width: 55px; text-align: right; font-size: 1em; color: var(--accent-green); font-family: var(--font-mono); }
+
+        .main-btn { width: 100%; padding: 16px; background: var(--accent-blue); color: white; border: none; border-radius: 6px; font-size: 1.1em; font-weight: bold; margin-top: 5px; cursor: pointer; }
+        
+        .copy-container { margin-top: 12px; }
+        .copy-area { background: #000; padding: 12px; border-radius: 4px; font-family: var(--font-mono); font-size: 1.1em; color: var(--accent-green); white-space: pre-wrap; text-align: left; border: 1px solid #333; line-height: 1.4; margin-bottom: 8px; user-select: text; }
+        .copy-btn { width: 100%; padding: 10px; background: #2c313a; color: var(--text-main); border: 1px solid #444; border-radius: 6px; font-size: 0.9em; font-weight: bold; cursor: pointer; }
+
+        .summary-card { background: rgba(55, 130, 240, 0.05); border: 1px solid var(--accent-blue); }
+        .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+        .summary-label { font-size: 0.85em; color: var(--text-sub); display: flex; align-items: center; gap: 5px; }
+        .summary-val { font-size: 1.3em; font-family: var(--font-mono); color: #fff; }
+        
+        .buffer-badge { 
+            color: var(--accent-blue); 
+            font-size: 0.9em; 
+            font-weight: bold; 
+            border: 1px solid var(--accent-blue); 
+            padding: 1px 6px; 
+            border-radius: 4px;
+            font-family: var(--font-mono);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="sticky-header">
+        <div class="header-container">
+            <div id="current-utc" class="utc-display">00:00:00</div>
+            <button id="ms-toggle-btn" class="ms-toggle" onclick="toggleMs()">ms</button>
+        </div>
+    </header>
+
+    <div class="app-title">TACTICAL IMPACT MONITOR v6.7</div>
+
+    <div class="card">
+        <span class="settings-label">ターゲット</span>
+        <select id="target-name" class="select-input" onchange="calcRally()" style="margin-bottom:12px; color: #fff; font-weight: bold;">
+            <option value="STF">STF</option>
+            <option value="YDK">YDK</option>
+            <option value="敵">敵</option>
+            <option value="敵ゴースト">敵ゴースト</option>
+        </select>
+
+        <span class="settings-label">集結モード</span>
+        <div class="rally-selector">
+            <div class="rally-opt active" onclick="setRallyBase(300, this)">5min</div>
+            <div class="rally-opt" onclick="setRallyBase(600, this)">10min</div>
+        </div>
+
+        <div style="margin-bottom:10px;">
+            <span class="settings-label"><span class="target-label">STF</span>の行軍時間 (s)</span>
+            <input type="number" id="other-s" class="num-input" value="45" inputmode="numeric" onfocus="this.select()" oninput="calcRally()">
+        </div>
+
+        <span class="settings-label">集結残り時間</span>
+        <div class="control-row">
+            <button class="step-btn" onclick="step('rem-time', -1)">−</button>
+            <input type="range" id="rem-time-s" min="0" max="600" value="300" oninput="syncRem(this.value)">
+            <button class="step-btn" onclick="step('rem-time', 1)">+</button>
+            <div class="val-display" id="rem-time-val">5:00</div>
+        </div>
+
+        <span class="settings-label">着弾バッファー (s)</span>
+        <input type="number" id="buffer-s" class="num-input" value="20" inputmode="numeric" style="margin-bottom:10px;" onfocus="this.select()" oninput="calcRally()">
+
+        <button class="main-btn" onclick="calcRally()">SYNC DATA</button>
+    </div>
+
+    <div class="card summary-card">
+        <div class="summary-item">
+            <span class="summary-label"><span class="target-label">STF</span>着弾</span>
+            <span id="arrival-target-display" class="summary-val">00:00:00</span>
+        </div>
+        <div class="summary-item" style="border-top: 1px solid #333; margin-top: 4px; padding-top: 8px;">
+            <span class="summary-label">
+                <span class="target-label">STF</span>着弾buffer込み 
+                <span id="buffer-val-badge" class="buffer-badge">+20s</span>
+            </span>
+            <span id="arrival-my-display" class="summary-val" style="color:var(--accent-blue); font-weight:bold;">00:00:00</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="copy-container">
+            <div id="copy-text" class="copy-area">--</div>
+            <button class="copy-btn" onclick="copyLogic()">COPY FOR CHAT</button>
+        </div>
+    </div>
+
+    <script>
+        let showMs = false; 
+
+        function toggleMs() {
+            showMs = !showMs;
+            const btn = document.getElementById('ms-toggle-btn');
+            if (showMs) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+
+        function setRallyBase(sec, el) {
+            document.querySelectorAll('.rally-opt').forEach(opt => opt.classList.remove('active'));
+            el.classList.add('active');
+            const slider = document.getElementById('rem-time-s');
+            slider.max = sec; slider.value = sec; syncRem(sec);
+        }
+
+        function syncRem(val) {
+            const m = Math.floor(val / 60);
+            const s = val % 60;
+            document.getElementById('rem-time-val').innerText = `${m}:${s.toString().padStart(2, '0')}`;
+            document.getElementById('rem-time-s').value = val;
+            calcRally();
+        }
+
+        function step(id, delta) {
+            const el = document.getElementById(id + '-s');
+            const newVal = Math.max(0, Math.min(parseInt(el.max), parseInt(el.value) + delta));
+            syncRem(newVal);
+        }
+
+        function formatFullUTC(ms) {
+            const d = new Date(ms);
+            return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}:${String(d.getUTCSeconds()).padStart(2, '0')}`;
+        }
+
+        function formatShortUTC(ms) {
+            const d = new Date(ms);
+            const m = String(d.getUTCMinutes()).padStart(2, '0');
+            const s = String(d.getUTCSeconds()).padStart(2, '0');
+            return `U${m}.${s}`;
+        }
+
+        setInterval(() => {
+            const now = new Date();
+            const h = String(now.getUTCHours()).padStart(2, '0');
+            const m = String(now.getUTCMinutes()).padStart(2, '0');
+            const s = String(now.getUTCSeconds()).padStart(2, '0');
+            
+            let timeStr = `${h}:${m}:${s}`;
+            if (showMs) {
+                const ms = String(Math.floor(now.getUTCMilliseconds() / 10)).padStart(2, '0');
+                timeStr += `.${ms}`;
+            }
+            document.getElementById('current-utc').innerText = timeStr;
+        }, 10);
+
+        function calcRally() {
+            const nowMs = Date.now();
+            const remSec = parseInt(document.getElementById('rem-time-s').value) || 0;
+            const otherSec = parseInt(document.getElementById('other-s').value) || 0;
+            const bufferSec = parseInt(document.getElementById('buffer-s').value) || 0;
+            const targetName = document.getElementById('target-name').value;
+
+            document.querySelectorAll('.target-label').forEach(el => el.innerText = targetName);
+            document.getElementById('buffer-val-badge').innerText = `+${bufferSec}s`;
+            
+            const arrivalTargetMs = nowMs + ((remSec + otherSec) * 1000);
+            const myArrivalMs = arrivalTargetMs + (bufferSec * 1000);
+
+            document.getElementById('arrival-target-display').innerText = formatFullUTC(arrivalTargetMs);
+            document.getElementById('arrival-my-display').innerText = formatFullUTC(myArrivalMs);
+
+            const copyTxt = `${targetName}着弾(+${bufferSec}s)\n${formatShortUTC(myArrivalMs)}`;
+            document.getElementById('copy-text').innerText = copyTxt;
+        }
+
+        function copyLogic() {
+            const txt = document.getElementById('copy-text').innerText;
+            if(txt === "--") return;
+            navigator.clipboard.writeText(txt).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.innerText = "COPIED!"; btn.style.background = "#00e676"; btn.style.color = "#000";
+                setTimeout(() => { 
+                    btn.innerText = "COPY FOR CHAT"; btn.style.background = "#2c313a"; btn.style.color = "var(--text-main)";
+                }, 1000);
+            });
+        }
+        
+        calcRally();
+    </script>
+</body>
+</html>
