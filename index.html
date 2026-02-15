@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TACTICAL IMPACT MONITOR v6.2</title>
+    <title>TACTICAL IMPACT MONITOR v6.5</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto+Mono:wght@500&display=swap');
 
@@ -45,7 +45,28 @@
             align-items: center;
         }
 
+        .header-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .utc-display { font-size: 1.6em; color: var(--accent-green); font-family: var(--font-mono); font-weight: bold; }
+
+        .ms-toggle {
+            background: #2c313a;
+            border: 1px solid #555;
+            color: #fff;
+            font-size: 0.7em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+        }
+        .ms-toggle.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
 
         .app-title {
             font-size: 0.8em;
@@ -86,17 +107,30 @@
 
         .summary-card { background: rgba(55, 130, 240, 0.05); border: 1px solid var(--accent-blue); }
         .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
-        .summary-label { font-size: 0.85em; color: var(--text-sub); }
+        .summary-label { font-size: 0.85em; color: var(--text-sub); display: flex; align-items: center; gap: 5px; }
         .summary-val { font-size: 1.3em; font-family: var(--font-mono); color: #fff; }
+        
+        .buffer-badge { 
+            color: var(--accent-blue); 
+            font-size: 0.9em; 
+            font-weight: bold; 
+            border: 1px solid var(--accent-blue); 
+            padding: 1px 6px; 
+            border-radius: 4px;
+            font-family: var(--font-mono);
+        }
     </style>
 </head>
 <body>
 
     <header class="sticky-header">
-        <div id="current-utc" class="utc-display">00:00:00.00</div>
+        <div class="header-container">
+            <div id="current-utc" class="utc-display">00:00:00.00</div>
+            <button id="ms-toggle-btn" class="ms-toggle active" onclick="toggleMs()">MS</button>
+        </div>
     </header>
 
-    <div class="app-title">TACTICAL IMPACT MONITOR v6.2</div>
+    <div class="app-title">TACTICAL IMPACT MONITOR v6.5</div>
 
     <div class="card">
         <span class="settings-label">ターゲット</span>
@@ -138,7 +172,10 @@
             <span id="arrival-target-display" class="summary-val">00:00:00</span>
         </div>
         <div class="summary-item" style="border-top: 1px solid #333; margin-top: 4px; padding-top: 8px;">
-            <span class="summary-label">目標着弾 (+<span id="buffer-val-label">20</span>s)</span>
+            <span class="summary-label">
+                <span class="target-label">STF</span>着弾buffer込み 
+                <span id="buffer-val-badge" class="buffer-badge">+20s</span>
+            </span>
             <span id="arrival-my-display" class="summary-val" style="color:var(--accent-blue); font-weight:bold;">00:00:00</span>
         </div>
     </div>
@@ -151,6 +188,15 @@
     </div>
 
     <script>
+        let showMs = true;
+
+        function toggleMs() {
+            showMs = !showMs;
+            const btn = document.getElementById('ms-toggle-btn');
+            if (showMs) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+
         function setRallyBase(sec, el) {
             document.querySelectorAll('.rally-opt').forEach(opt => opt.classList.remove('active'));
             el.classList.add('active');
@@ -189,8 +235,13 @@
             const h = String(now.getUTCHours()).padStart(2, '0');
             const m = String(now.getUTCMinutes()).padStart(2, '0');
             const s = String(now.getUTCSeconds()).padStart(2, '0');
-            const ms = String(Math.floor(now.getUTCMilliseconds() / 10)).padStart(2, '0');
-            document.getElementById('current-utc').innerText = `${h}:${m}:${s}.${ms}`;
+            
+            let timeStr = `${h}:${m}:${s}`;
+            if (showMs) {
+                const ms = String(Math.floor(now.getUTCMilliseconds() / 10)).padStart(2, '0');
+                timeStr += `.${ms}`;
+            }
+            document.getElementById('current-utc').innerText = timeStr;
         }, 10);
 
         function calcRally() {
@@ -201,7 +252,7 @@
             const targetName = document.getElementById('target-name').value;
 
             document.querySelectorAll('.target-label').forEach(el => el.innerText = targetName);
-            document.getElementById('buffer-val-label').innerText = bufferSec;
+            document.getElementById('buffer-val-badge').innerText = `+${bufferSec}s`;
             
             const arrivalTargetMs = nowMs + ((remSec + otherSec) * 1000);
             const myArrivalMs = arrivalTargetMs + (bufferSec * 1000);
