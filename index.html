@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TACTICAL IMPACT MONITOR v6.5</title>
+    <title>TACTICAL IMPACT MONITOR v6.7</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto+Mono:wght@500&display=swap');
 
@@ -54,18 +54,20 @@
         .utc-display { font-size: 1.6em; color: var(--accent-green); font-family: var(--font-mono); font-weight: bold; }
 
         .ms-toggle {
-            background: #2c313a;
-            border: 1px solid #555;
-            color: #fff;
+            background: transparent;
+            border: 1px solid #444;
+            color: #666;
             font-size: 0.7em;
-            padding: 4px 8px;
+            padding: 1px 7px;
             border-radius: 4px;
             cursor: pointer;
             font-family: var(--font-mono);
+            transition: all 0.2s;
+            line-height: 1.2;
         }
         .ms-toggle.active {
-            background: var(--accent-blue);
-            border-color: var(--accent-blue);
+            border-color: #aaa;
+            color: #eee;
         }
 
         .app-title {
@@ -125,12 +127,12 @@
 
     <header class="sticky-header">
         <div class="header-container">
-            <div id="current-utc" class="utc-display">00:00:00.00</div>
-            <button id="ms-toggle-btn" class="ms-toggle active" onclick="toggleMs()">MS</button>
+            <div id="current-utc" class="utc-display">00:00:00</div>
+            <button id="ms-toggle-btn" class="ms-toggle" onclick="toggleMs()">ms</button>
         </div>
     </header>
 
-    <div class="app-title">TACTICAL IMPACT MONITOR v6.5</div>
+    <div class="app-title">TACTICAL IMPACT MONITOR v6.7</div>
 
     <div class="card">
         <span class="settings-label">ターゲット</span>
@@ -188,7 +190,7 @@
     </div>
 
     <script>
-        let showMs = true;
+        let showMs = false; 
 
         function toggleMs() {
             showMs = !showMs;
