@@ -15,7 +15,7 @@
             --text-main: #333d47;
             --text-sub: #90a4ae;
             --font-mono: 'Roboto Mono', monospace;
-            --header-height: 60px;
+            --header-height: 50px;
         }
 
         body {
@@ -23,8 +23,8 @@
             color: var(--text-main);
             font-family: 'Noto Sans JP', sans-serif;
             margin: 0;
-            padding: 8px;
-            padding-top: calc(var(--header-height) + 20px);
+            padding: 4px;
+            padding-top: calc(var(--header-height) + 10px);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -42,14 +42,14 @@
             border-bottom: 1px solid #e0e0e0;
             z-index: 1000;
             display: grid;
-            grid-template-columns: 60px 1fr 60px;
+            grid-template-columns: 50px 1fr 50px;
             align-items: center;
         }
 
         .utc-display { 
             grid-column: 2;
             justify-self: center;
-            font-size: 1.6em; 
+            font-size: 1.5em; 
             color: var(--text-main); 
             font-family: var(--font-mono); 
             font-weight: bold; 
@@ -61,41 +61,44 @@
             background: transparent;
             border: 1px solid #ddd;
             color: #ccc;
-            font-size: 0.7em;
-            width: 34px;
-            height: 24px;
-            padding: 0;
+            font-size: 0.6em;
+            width: 30px;
+            height: 20px;
             border-radius: 4px;
             cursor: pointer;
             font-family: var(--font-mono);
-            touch-action: manipulation;
         }
-        .ms-toggle.active {
-            background: var(--accent-sky);
-            border-color: var(--accent-sky);
-            color: white;
-        }
-
-        .app-title {
-            font-size: 0.8em;
-            color: var(--text-sub);
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-        }
+        .ms-toggle.active { background: var(--accent-sky); border-color: var(--accent-sky); color: white; }
 
         .card {
             background: var(--card-bg);
             border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
             width: 100%;
             max-width: 440px;
             box-sizing: border-box;
             border: 1px solid #eee;
         }
 
-        .settings-label { font-size: 0.75em; color: var(--text-sub); margin-bottom: 6px; display: block; font-weight: bold; }
+        /* 横並びのレイアウト設定 */
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+
+        .settings-label {
+            flex: 0 0 100px; /* ラベルの幅を固定 */
+            font-size: 0.75em;
+            color: var(--text-sub);
+            font-weight: bold;
+        }
+
+        .input-field {
+            flex: 1;
+        }
 
         .num-input, .select-input { 
             width: 100%; 
@@ -105,71 +108,66 @@
             color: var(--text-main); 
             font-family: var(--font-mono); 
             font-size: 1.1em; 
-            padding: 10px; 
+            padding: 6px; 
             box-sizing: border-box; 
             text-align: center;
             outline: none;
-            touch-action: manipulation;
         }
 
-        .rally-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-        .rally-opt { background: #f8f9fa; border: 1px solid #eee; border-radius: 4px; text-align: center; padding: 10px 0; font-size: 0.9em; cursor: pointer; color: var(--text-sub); touch-action: manipulation; }
+        .rally-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .rally-opt { background: #f8f9fa; border: 1px solid #eee; border-radius: 4px; text-align: center; padding: 6px 0; font-size: 0.85em; cursor: pointer; color: var(--text-sub); }
         .rally-opt.active { background: var(--accent-sky); border-color: var(--accent-sky); color: white; font-weight: bold; }
 
-        .control-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-        input[type="range"] { flex-grow: 1; accent-color: var(--accent-sky); touch-action: manipulation; }
+        .slider-row { display: flex; align-items: center; gap: 6px; flex: 1; }
+        input[type="range"] { flex-grow: 1; accent-color: var(--accent-sky); }
         
-        /* 集結残り時間表示の幅を固定 */
         .val-display {
-            min-width: 65px;
+            min-width: 55px;
             text-align: right;
             font-family: var(--font-mono);
             font-size: 1.1em;
-            color: var(--text-main);
             font-weight: bold;
         }
 
         .step-btn { 
-            width: 40px; height: 40px; 
+            width: 32px; height: 32px; 
             background: #eee; border: none; 
             border-radius: 4px; color: var(--text-main); 
             font-size: 1.2em; cursor: pointer;
-            touch-action: manipulation;
         }
 
         .main-btn { 
-            width: 100%; padding: 14px; 
+            width: 100%; padding: 12px; 
             background: var(--accent-sakura); color: white; 
             border: none; border-radius: 4px; 
             font-size: 1.1em; font-weight: bold; 
-            margin-top: 5px; cursor: pointer;
-            touch-action: manipulation;
+            cursor: pointer;
         }
         
+        .summary-card { border-top: 3px solid var(--accent-sky); padding: 8px 12px; }
+        .summary-item { display: flex; justify-content: space-between; align-items: center; }
+        .summary-label { font-size: 0.8em; color: var(--text-sub); font-weight: bold; }
+        .summary-val { font-size: 1.3em; font-family: var(--font-mono); color: var(--text-main); font-weight: bold; }
+        
+        .buffer-badge { 
+            color: var(--accent-sky); font-size: 0.7em; 
+            background: #eef9ff; padding: 1px 4px; 
+            border-radius: 3px; font-family: var(--font-mono);
+            margin-left: 4px;
+        }
+
         .copy-area { 
-            background: #fafafa; padding: 12px; border-radius: 4px; 
+            background: #fafafa; padding: 8px; border-radius: 4px; 
             font-family: var(--font-mono); font-size: 1.1em; 
             color: var(--text-main); white-space: pre-wrap; 
             text-align: left; border: 1px solid #eee; 
-            line-height: 1.4; margin-bottom: 10px; 
+            line-height: 1.2; margin-bottom: 8px; 
         }
         .copy-btn { 
-            width: 100%; padding: 10px; 
+            width: 100%; padding: 8px; 
             background: transparent; color: var(--text-sub); 
             border: 1px solid #ddd; border-radius: 4px; 
-            font-size: 0.9em; cursor: pointer; 
-            touch-action: manipulation;
-        }
-
-        .summary-card { border-top: 3px solid var(--accent-sky); }
-        .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
-        .summary-label { font-size: 0.85em; color: var(--text-sub); font-weight: bold; }
-        .summary-val { font-size: 1.4em; font-family: var(--font-mono); color: var(--text-main); font-weight: bold; }
-        
-        .buffer-badge { 
-            color: var(--accent-sky); font-size: 0.8em; 
-            background: #eef9ff; padding: 2px 6px; 
-            border-radius: 4px; font-family: var(--font-mono);
+            font-size: 0.85em; cursor: pointer; 
         }
     </style>
 </head>
@@ -180,38 +178,52 @@
         <button id="ms-toggle-btn" class="ms-toggle" onclick="toggleMs()">ms</button>
     </header>
 
-    <div class="app-title">TACTICAL IMPACT MONITOR v6.7</div>
-
     <div class="card">
-        <span class="settings-label">ターゲット</span>
-        <select id="target-name" class="select-input" onchange="calcRally()" style="margin-bottom:12px;">
-            <option value="STF">STF</option>
-            <option value="YDK">YDK</option>
-            <option value="敵">敵</option>
-            <option value="敵ゴースト">敵ゴースト</option>
-        </select>
-
-        <span class="settings-label">集結モード</span>
-        <div class="rally-selector">
-            <div class="rally-opt active" onclick="setRallyBase(300, this)">5min</div>
-            <div class="rally-opt" onclick="setRallyBase(600, this)">10min</div>
+        <div class="input-row">
+            <span class="settings-label">ターゲット</span>
+            <div class="input-field">
+                <select id="target-name" class="select-input" onchange="calcRally()">
+                    <option value="STF">STF</option>
+                    <option value="YDK">YDK</option>
+                    <option value="敵">敵</option>
+                    <option value="敵ゴースト">敵ゴースト</option>
+                </select>
+            </div>
         </div>
 
-        <div style="margin-bottom:12px;">
-            <span class="settings-label"><span class="target-label">STF</span>への行軍時間 (s)</span>
-            <input type="number" id="other-s" class="num-input" value="45" inputmode="numeric" onfocus="this.select()" oninput="calcRally()">
+        <div class="input-row">
+            <span class="settings-label">集結モード</span>
+            <div class="input-field">
+                <div class="rally-selector">
+                    <div class="rally-opt active" onclick="setRallyBase(300, this)">5min</div>
+                    <div class="rally-opt" onclick="setRallyBase(600, this)">10min</div>
+                </div>
+            </div>
         </div>
 
-        <span class="settings-label">集結残り時間</span>
-        <div class="control-row">
-            <button class="step-btn" onclick="step('rem-time', -1)">−</button>
-            <input type="range" id="rem-time-s" min="0" max="300" value="300" oninput="syncRem(this.value)">
-            <button class="step-btn" onclick="step('rem-time', 1)">+</button>
-            <div class="val-display" id="rem-time-val">5:00</div>
+        <div class="input-row">
+            <span class="settings-label"><span class="target-label">STF</span>行軍(s)</span>
+            <div class="input-field">
+                <input type="number" id="other-s" class="num-input" value="45" inputmode="numeric" onfocus="this.select()" oninput="calcRally()">
+            </div>
         </div>
 
-        <span class="settings-label">着弾バッファー (s)</span>
-        <input type="number" id="buffer-s" class="num-input" value="20" inputmode="numeric" style="margin-bottom:16px;" onfocus="this.select()" oninput="calcRally()">
+        <div class="input-row">
+            <span class="settings-label">集結残り</span>
+            <div class="slider-row">
+                <button class="step-btn" onclick="step('rem-time', -1)">−</button>
+                <input type="range" id="rem-time-s" min="0" max="300" value="300" oninput="syncRem(this.value)">
+                <button class="step-btn" onclick="step('rem-time', 1)">+</button>
+                <div class="val-display" id="rem-time-val">5:00</div>
+            </div>
+        </div>
+
+        <div class="input-row" style="margin-bottom:12px;">
+            <span class="settings-label">着弾バッファー(s)</span>
+            <div class="input-field">
+                <input type="number" id="buffer-s" class="num-input" value="20" inputmode="numeric" onfocus="this.select()" oninput="calcRally()">
+            </div>
+        </div>
 
         <button class="main-btn" onclick="calcRally()">SYNC DATA</button>
     </div>
@@ -221,10 +233,9 @@
             <span class="summary-label"><span class="target-label">STF</span> 着弾</span>
             <span id="arrival-target-display" class="summary-val">00:00:00</span>
         </div>
-        <div class="summary-item" style="border-top: 1px solid #f8f8f8; margin-top: 4px; padding-top: 8px;">
+        <div class="summary-item" style="border-top: 1px solid #f8f8f8; margin-top: 4px; padding-top: 4px;">
             <span class="summary-label">
-                自軍着弾
-                <span id="buffer-val-badge" class="buffer-badge">+20s</span>
+                自軍着弾 <span id="buffer-val-badge" class="buffer-badge">+20s</span>
             </span>
             <span id="arrival-my-display" class="summary-val" style="color:var(--accent-sky);">00:00:00</span>
         </div>
@@ -257,7 +268,6 @@
         function syncRem(val) {
             const m = Math.floor(val / 60);
             const s = val % 60;
-            // 常に分を1桁または2桁で表示、秒は2桁固定
             document.getElementById('rem-time-val').innerText = `${m}:${s.toString().padStart(2, '0')}`;
             document.getElementById('rem-time-s').value = val;
             calcRally();
@@ -286,7 +296,6 @@
             const h = String(now.getUTCHours()).padStart(2, '0');
             const m = String(now.getUTCMinutes()).padStart(2, '0');
             const s = String(now.getUTCSeconds()).padStart(2, '0');
-            
             let timeStr = `${h}:${m}:${s}`;
             if (showMs) {
                 const ms = String(Math.floor(now.getUTCMilliseconds() / 10)).padStart(2, '0');
@@ -327,7 +336,6 @@
                 }, 1000);
             });
         }
-        
         calcRally();
     </script>
 </body>
